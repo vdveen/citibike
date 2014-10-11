@@ -3,10 +3,10 @@
 
 opendata = open('Citibike10.csv')
 rawdata = opendata.read()
-rawdata = rawdata.split('\r')
-print len(rawdata)
-print rawdata
-bikedata = rawdata
+rawdata = rawdata.replace('\r', ',')
+rawdata = rawdata.split(',')
+
+bikedata = []
 
 for item in rawdata:
   if item == '""tripduration':
@@ -19,8 +19,11 @@ for item in rawdata:
 
   elif item.startswith('""') and item.endswith('""'):
     item = item[2:-2]
-    if item.endswith('year') or len(item) == 1:
-      item = item + '\r'
+    bikedata.append(item)
+
+  elif item.startswith('"'):
+    item = item[1:]
+    item = '\r' + item
     bikedata.append(item)
 
 
@@ -31,5 +34,4 @@ newfile = open('Citibike10-2.csv', 'w')
 for item in bikedata:
   newfile.write(item)
   newfile.write(',')
-
 newfile.close()
