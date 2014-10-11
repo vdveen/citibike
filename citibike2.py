@@ -33,11 +33,34 @@ for item in rawdata:
     item = '\r' + item
     bikedata.append(item)
 
-print List converted
-
-#Add neatly converted files to output file
-newfile = open('Citibike10-2.csv', 'w')
+print 'Cleaned up data'
+#Here, the original data is fully cleaned up.
+#If you print bikedata, it will
+bikefile = open('Citibike10clean.csv', 'w')
 for item in bikedata:
-  newfile.write(item)
-  newfile.write(',')
-newfile.close()
+  bikefile.write(item)
+  bikefile.write(',')
+
+#Now, lets remove the unneeded columns, shall we?
+newfile = open('Citibike10-2.csv', 'w')
+count = 0
+for item in bikedata:
+  count = count + 1           #Counts what number the item is
+  if count % 15 == 4:           #Don't write start station ID
+    newfile.write('')
+  elif count % 15 == 5:         #Don't write start station name
+    newfile.write('')
+  elif count % 15 == 8:         #Don't write end station ID
+    newfile.write('')
+  elif count % 15 == 9:         #Don't write end station name
+    newfile.write('')
+  elif count % 15 == 9:         #Don't write end station name
+      newfile.write('')
+  elif count % 15 == 12:        #Don't write bike ID
+      newfile.write('')
+  elif count % 15 == 13:        #Don't write subscriber type
+    newfile.write('')
+  else:                         #Write everything else
+    newfile.write(item)
+    newfile.write(',')
+newfile.close()                 #Save it to the file!
