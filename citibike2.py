@@ -1,5 +1,7 @@
 #Code written by vdveen
-#Purpose: TBD yo
+#Purpose: cleaning up the original data, use it in ArcPy.
+#So the original csv file has a million apostrophes, which I
+#first need to get rid of.
 
 opendata = open('Citibike10.csv')  #Open and read file
 rawdata = opendata.read()
@@ -35,15 +37,18 @@ for item in rawdata:
 
 print 'Cleaned up data'
 #Here, the original data is fully cleaned up.
-#If you print bikedata, it will
+#This part of the script creates a file for the cleand up data.
 bikefile = open('Citibike10clean.csv', 'w')
 for item in bikedata:
   bikefile.write(item)
   bikefile.write(',')
 
-#Now, lets remove the unneeded columns, shall we?
+#So, done cleaning, now we create a new file to put the
+#relevant data in, stripping out all unnecessary stuff.
 newfile = open('Citibike10-2.csv', 'w')
 count = 0
+
+#Now, lets remove the unneeded columns, shall we?
 for item in bikedata:
   count = count + 1           #Counts what number the item is
   if count % 15 == 4:           #Don't write start station ID
@@ -63,4 +68,6 @@ for item in bikedata:
   else:                         #Write everything else
     newfile.write(item)
     newfile.write(',')
-newfile.close()                 #Save it to the file!
+
+#Finally, the file is how we want it. Let's save it to the file!
+newfile.close()
