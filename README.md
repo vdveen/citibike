@@ -9,8 +9,13 @@ ways using Python and Arcpy.
 Input is any month's Citibike data, in csv format. 
 
 Todo:
+
 [V] Convert Raw Data Into Usable Data
+
 [V] Strip Unneccesary Data
+
 [ ] Convert to Arcpy Compatible Data
+
 [ ] Write Script to Visualize Bike Trips
+
 [ ] Output video / gif. 
