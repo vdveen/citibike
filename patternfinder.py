@@ -15,6 +15,7 @@ for item in line:         #Getting the relevant columns
   if count % 9 == 0:
     gender = item
     print gender , 'd'
-  dictionary[trip] = item
+  if item <> '':                            #No empty values pls
+    dictionary[trip] = item
 
-print dictionary
+print dictionary      #Look at that nice, solid dic...tionary
