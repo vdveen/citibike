@@ -35,6 +35,10 @@ for item in rawdata:
     item = '\r' + item
     bikedata.append(item)
 
+  elif item == '\N':
+    item = 'null'
+    bikedata.append(item)
+
 print 'Cleaned up data'
 #Here, the original data is fully cleaned up.
 #This part of the script creates a file for the cleand up data.

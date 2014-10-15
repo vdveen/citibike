@@ -5,7 +5,9 @@ lines = opendata.read()
 line = lines.split(',')
 
 count = 0
-for item in line:
+dictionary = {}
+
+for item in line:         #Getting the relevant columns
   count = count + 1
   if count % 9 == 1:
     trip = item.replace('\r', '')
@@ -13,3 +15,6 @@ for item in line:
   if count % 9 == 0:
     gender = item
     print gender , 'd'
+  dictionary[trip] = item
+
+print dictionary
