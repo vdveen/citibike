@@ -1,9 +1,9 @@
 #Code written by vdveen
-#Purpose: cleaning up the original data, use it in ArcPy.
+#Purpose: cleaning up the original data.
 #So the original csv file has a million apostrophes, which I
 #first need to get rid of.
 
-opendata = open('Citibike10.csv')  #Open and read file
+opendata = open('Citibike100.csv')  #Open and read file
 rawdata = opendata.read()
 rawdata = rawdata.replace('\r', ',')  #Replace newlines with commas
 rawdata = rawdata.split(',')       #Then split on commas
@@ -38,14 +38,14 @@ for item in rawdata:
 print 'Cleaned up data'
 #Here, the original data is fully cleaned up.
 #This part of the script creates a file for the cleand up data.
-bikefile = open('Citibike10clean.csv', 'w')
+bikefile = open('Citibike100clean.csv', 'w')
 for item in bikedata:
   bikefile.write(item)
   bikefile.write(',')
 
 #So, done cleaning, now we create a new file to put the
 #relevant data in, stripping out all unnecessary stuff.
-newfile = open('Citibike10-2.csv', 'w')
+newfile = open('Citibike100-2.csv', 'w')
 count = 0
 
 #Now, lets remove the unneeded columns, shall we?
