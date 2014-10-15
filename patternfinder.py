@@ -1,6 +1,6 @@
 #This code is a test to look for some initial patterns in the data.
 
-opendata = open('Citibike100-2.csv')  #Open and read file
+opendata = open('data/Citibike-2.csv')  #Open and read file
 lines = opendata.read()
 line = lines.split(',')
 
@@ -31,8 +31,6 @@ for value in dictionary:
     if dictionary[value] == '2':
       femaletripduration.append(int(value))
 
-print sorted(maletripduration)
-print sorted(femaletripduration)
 
 print 'The Average for males is:', sum(maletripduration) / len(maletripduration)
 print 'The Average for females is:', sum(femaletripduration) / len(femaletripduration)
