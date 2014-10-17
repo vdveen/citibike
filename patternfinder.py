@@ -10,7 +10,7 @@ gender = []
 
 for item in line:         #Getting the relevant values
   count = count + 1
-  if count <= 100:
+  if count <= 500000:
     if count % 9 == 1 or count % 9 == 0:   #Gender or tripduration
       if 'd' in item:               #Making sure header is ignored
         item = item
@@ -22,6 +22,8 @@ for item in line:         #Getting the relevant values
 
 #Now that gender and trip list are filled, this function zips them together
 dictionary = dict(zip(trip, gender))
+
+print dictionary
 
 #Now lets separate the male and female values
 #and put them in a new list
