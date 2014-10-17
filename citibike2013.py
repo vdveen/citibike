@@ -3,17 +3,19 @@
 #So the original csv file has a million apostrophes, which I
 #first need to get rid of.
 
-opendata = open('data/2013-07 - Citi Bike trip data.csv')  #Open and read file
+opendata = open('data/2014-07 - Citi Bike trip data.csv')  #Open and read file
 rawdata = opendata.read()
 rawdata = rawdata.replace('\r', ',')  #Replace newlines with commas
 rawdata = rawdata.split(',')       #Then split on commas
 
 #New list to add to
 bikedata = []
+count = 0
 
 #Check all items in data, remove brackets, convert it into a flawless file.
 for item in rawdata:
-  if item == 'tripduration"':
+  if count % 15 == 1 and count <= 10:
+    item = 'tripduration'
     bikedata.append(item)
 
   elif item == '""""starttime""':
@@ -31,6 +33,10 @@ for item in rawdata:
 
   elif item.startswith('"'):
     item = item[1:]
+    item = '\r' + item
+    bikedata.append(item)
+
+  elif count % 15 == 1:
     item = '\r' + item
     bikedata.append(item)
 
@@ -75,3 +81,4 @@ for item in bikedata:
 
 #Finally, the file is how we want it. Let's save it to the file!
 newfile.close()
+print 'Done aaand...done.'
