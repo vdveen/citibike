@@ -14,20 +14,15 @@ count = 0
 
 #Check all items in data, remove brackets, convert it into a flawless file.
 for item in rawdata:
-  if count % 15 == 1 and count <= 10:
-    item = 'tripduration'
+  if 'N' in item:                         #Eliminating \N values, that are null anyway
+    item = 'null'
     bikedata.append(item)
 
-  elif item.startswith('"'):
+  elif item.startswith('"'):      #All values get their " " cut off
     item = item[1:-1]
     bikedata.append(item)
 
-  elif count % 15 == 1:
-    item = '\r' + item
-    bikedata.append(item)
-
-  elif item == '\N':
-    item = 'null'
+  elif count % 16 == 0:           #The first items in the line don't need to do that
     bikedata.append(item)
 
 print 'Cleaned up data'

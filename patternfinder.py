@@ -5,30 +5,35 @@ lines = opendata.read()
 line = lines.split(',')
 
 count = 0             #Prereq definitions for the loop below
-dictionary = {}
-#Using dict. because value gender is after the value tripduration in the loop
-#and I didn't know how to make that work with a for loop
+trip = []
+gender = []
 
-for item in line:         #Getting the relevant columns
+for item in line:         #Getting the relevant values
   count = count + 1
-  if count % 9 == 1:
-    trip = item.replace('\r', '')
-  if count % 9 == 0:
-    item = item
-  if item <> '':                            #No empty values pls
-    dictionary[trip] = item
+  if count <= 100:
+    if count % 9 == 1 or count % 9 == 0:   #Gender or tripduration
+      if 'd' in item:               #Making sure header is ignored
+        item = item
+      elif len(item) == 1:      #Adding the gender to the list
+        gender.append(int(item))
+      else:
+        item = item[2:-1]       #Adding and slicing tripduration from '"\n 404"' to 404
+        trip.append(int(item))
 
-#print dictionary      Look at that nice, solid dic...tionary
+#Now that gender and trip list are filled, this function zips them together
+dictionary = dict(zip(trip, gender))
 
-maletripduration = []     #Now let's put the tripduration from the dictionary in a list
-femaletripduration = []   #separated by gender
+#Now lets separate the male and female values
+#and put them in a new list
+maletripduration = []
+femaletripduration = []
 
 for value in dictionary:
-    if dictionary[value] == '1':
+    if dictionary[value] == 1:
       maletripduration.append(int(value))
 
 for value in dictionary:
-    if dictionary[value] == '2':
+    if dictionary[value] == 2:
       femaletripduration.append(int(value))
 
 

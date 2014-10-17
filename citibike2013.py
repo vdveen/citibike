@@ -3,7 +3,7 @@
 #So the original csv file has a million apostrophes, which I
 #first need to get rid of.
 
-opendata = open('data/2014-07 - Citi Bike trip data.csv')  #Open and read file
+opendata = open('data/2013-07 - Citi Bike trip data.csv')  #Open and read file
 rawdata = opendata.read()
 rawdata = rawdata.replace('\r', ',')  #Replace newlines with commas
 rawdata = rawdata.split(',')       #Then split on commas
