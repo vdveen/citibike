@@ -25,7 +25,9 @@ for item in rawdata:
   elif count % 16 == 0:           #The first items in the line don't need to do that
     bikedata.append(item)
 
+opendata.close()
 print 'Cleaned up data'
+
 #Here, the original data is fully cleaned up.
 #This part of the script creates a file for the cleaned up data.
 bikefile = open('data/Citibike-clean.csv', 'w')
