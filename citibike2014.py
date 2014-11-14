@@ -27,18 +27,19 @@ for item in rawdata:
 
 print 'Cleaned up data'
 #Here, the original data is fully cleaned up.
-#This part of the script creates a file for the cleand up data.
+#This part of the script creates a file for the cleaned up data.
 bikefile = open('data/Citibike-clean.csv', 'w')
 for item in bikedata:
   bikefile.write(item)
   bikefile.write(',')
+bikefile.close()
 
 #So, done cleaning, now we create a new file to put the
 #relevant data in, stripping out all unnecessary stuff.
 newfile = open('data/Citibike-2.csv', 'w')
 count = 0
 
-#Now, lets remove the unneeded columns, shall we?
+#Now, lets remove the unneeded columns
 for item in bikedata:
   count = count + 1           #Counts what number the item is
   if count % 15 == 4:           #Don't write start station ID
