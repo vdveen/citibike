@@ -6,12 +6,12 @@ from sys import exit
 
 #Get file and create search cursor from it
 InputFile = 'data/2014-07 - Citi Bike trip data.csv'
-cursor = arcpy.SearchCursor(InputFile)
+fields = ['starttime', 'start station latitude', 'start station longitude',\
+ 'end station latitude', 'end station longitude']
+cursor = arcpy.SearchCursor(InputFile, fields)
 
 fc = []
-arcpy.env.overwriteOutput = True
-arcpy.CreateFeatureclass_management('Data',"Oou.shp", "Polyline", None,\
-                                    None, None, 32662)
+
 for row in cursor:
     #get the coordinates of the start and end
     startLat = row.getValue('start station latitude')
@@ -38,8 +38,14 @@ for row in cursor:
     if date.day == 2:
         break
 
+#Create dataset to put fc in
+arcpy.CreateFileGDB_management("Data", "Output.gdb")
 
-#arcpy.CopyFeatures_management(fc, r"Data/Oou.shp")
-#somehow the shp loses its SR
+#Put the fc in the dataset
+arcpy.CopyFeatures_management(fc, 'Data/Output.gdb/output')
 
+#Proejct the fc in the dataset
+arcpy.DefineProjection_management('Data/Output.gdb/output', 32662)
 
+#Clean up the mess
+del cursor, row
