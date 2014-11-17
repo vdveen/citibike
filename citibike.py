@@ -9,7 +9,9 @@ InputFile = 'data/2014-07 - Citi Bike trip data.csv'
 cursor = arcpy.SearchCursor(InputFile)
 
 fc = []
-
+arcpy.env.overwriteOutput = True
+arcpy.CreateFeatureclass_management('Data',"Oou.shp", "Polyline", None,\
+                                    None, None, 32662)
 for row in cursor:
     #get the coordinates of the start and end
     startLat = row.getValue('start station latitude')
@@ -30,12 +32,14 @@ for row in cursor:
     #Put them in a fc
     fc.append(tripline)
 
+    #End at day 2
     values = row.getValue('starttime'),
     date = values[0]
     if date.day == 2:
         break
 
-arcpy.CopyFeatures_management(fc, r"E:\UGIS\G567\GitHub\citibike\best.shp")
-print 'Copied'
+
+#arcpy.CopyFeatures_management(fc, r"Data/Oou.shp")
+#somehow the shp loses its SR
 
 
