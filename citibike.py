@@ -11,6 +11,7 @@ fields = ['starttime', 'start station latitude', 'start station longitude',\
 cursor = arcpy.SearchCursor(InputFile, fields)
 
 fc = []
+hr = []
 
 for row in cursor:
     #get the coordinates of the start and end
@@ -32,20 +33,47 @@ for row in cursor:
     #Put them in a fc
     fc.append(tripline)
 
-    #End at day 2
-    values = row.getValue('starttime'),
+    #Put hour in a list
+    values = row.getValue('starttime'), #somehow that comma matters
     date = values[0]
+    hour = date.hour
+    print date, hour
+    hr.append(hour)
+
+    #End at day 2
     if date.day == 2:
         break
 
 #Create dataset to put fc in
 arcpy.CreateFileGDB_management("Data", "Output.gdb")
 
+output = 'Data/Output.gdb/output'
+
 #Put the fc in the dataset
-arcpy.CopyFeatures_management(fc, 'Data/Output.gdb/output')
+arcpy.CopyFeatures_management(fc, output)
 
 #Proejct the fc in the dataset
-arcpy.DefineProjection_management('Data/Output.gdb/output', 32662)
+arcpy.DefineProjection_management(output, 32662)
+
+arcpy.env.workspace = 'Data/Output.gdb'
+
+#Add field to file with the hour of the day
+arcpy.AddField_management('output', 'Hour', 'FLOAT')
+
+#Run update cursor to fill it in
+cursor2 = arcpy.UpdateCursor(output)
+houriter = iter(hr)
+count = 0
+
+for row in cursor2:
+    houriter.next()
+    row.Hour = houriter
+    cursor2.updateRow(row)
+    count += 1
+    if count % 100 == 0:
+        print count
 
 #Clean up the mess
-del cursor, row
+del cursor, cursor2, row
+
+print 'Done now'
