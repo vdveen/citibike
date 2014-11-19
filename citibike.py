@@ -4,23 +4,42 @@ import arcpy
 import datetime
 from sys import exit
 
-#Get file and create search cursor from it
+#Retrieve file and create update cursor from it
 InputFile = 'data/2014-07 - Citi Bike trip data.csv'
 fields = ['starttime', 'start station latitude', 'start station longitude',\
  'end station latitude', 'end station longitude']
-cursor = arcpy.SearchCursor(InputFile, fields)
+cursor = arcpy.da.SearchCursor(InputFile, fields)
 
-fc = []
-hr = []
+#Create dataset to put fc in and make it the workspace
+arcpy.CreateFileGDB_management("Data", "Output.gdb")
+arcpy.env.workspace = 'Data/Output.gdb'
+
+#Define path of the line map
+output = 'Data/Output.gdb/linemap'
+
+#Create Feature Class to populate
+arcpy.CreateFeatureclass_management('Data/Output.gdb', 'linemap', \
+'POLYLINE', None, 'DISABLED', 'DISABLED', 32662)
+
+#Add field to FC with the hour of the day
+arcpy.AddField_management(output, 'Hour', 'FLOAT')
+
+#Create empty lists to append to
+#fc = []
+#hr = []
+
+#Create insertcursor for populating the FC
+fields2 = ['SHAPE@', 'Hour']
+inscursor = arcpy.da.InsertCursor(output, fields2)
 
 for row in cursor:
-    #get the coordinates of the start and end
-    startLat = row.getValue('start station latitude')
-    startLon = row.getValue('start station longitude')
-    endLat = row.getValue('end station latitude')
-    endLon = row.getValue('end station longitude')
+    #Get the coordinates of the start and end
+    startLat = row[1]
+    startLon = row[2]
+    endLat = row[3]
+    endLon = row[4]
 
-    #make two points in Arcpy
+    #Make two points in Arcpy
     start = arcpy.Point(startLon,startLat,None,None,0)
     end = arcpy.Point(endLon,endLat,None,None,1)
 
@@ -30,50 +49,29 @@ for row in cursor:
     #Create line between the two
     tripline = arcpy.Polyline(triplineArray)
 
-    #Put them in a fc
-    fc.append(tripline)
-
     #Put hour in a list
-    values = row.getValue('starttime'), #somehow that comma matters
+    values = row[0], #somehow it crashes without this comma
     date = values[0]
     hour = date.hour
     print date, hour
-    hr.append(hour)
+
+    #Put point and hour in the FC with the InsertCursor
+    newRow = [tripline,hour]
+    inscursor.insertRow(newRow)
 
     #End at day 2
     if date.day == 2:
         break
 
-#Create dataset to put fc in
-arcpy.CreateFileGDB_management("Data", "Output.gdb")
-
-output = 'Data/Output.gdb/output'
+exit("NO PASS")
 
 #Put the fc in the dataset
-arcpy.CopyFeatures_management(fc, output)
+arcpy.CopyFeatures_management(point, output)
 
-#Proejct the fc in the dataset
+#Project the fc in the dataset
 arcpy.DefineProjection_management(output, 32662)
 
-arcpy.env.workspace = 'Data/Output.gdb'
-
-#Add field to file with the hour of the day
-arcpy.AddField_management('output', 'Hour', 'FLOAT')
-
-#Run update cursor to fill it in
-cursor2 = arcpy.UpdateCursor(output)
-houriter = iter(hr)
-count = 0
-
-for row in cursor2:
-    houriter.next()
-    row.Hour = houriter
-    cursor2.updateRow(row)
-    count += 1
-    if count % 100 == 0:
-        print count
-
 #Clean up the mess
-del cursor, cursor2, row
+del cursor, inscursor, row
 
 print 'Done now'
