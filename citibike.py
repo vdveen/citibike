@@ -10,15 +10,24 @@ fields = ['starttime', 'start station latitude', 'start station longitude',\
  'end station latitude', 'end station longitude']
 cursor = arcpy.da.SearchCursor(InputFile, fields)
 
-#Create dataset to put fc in and make it the workspace
-arcpy.CreateFileGDB_management("Data", "Output.gdb")
+#Create dataset to put fc in
+try:
+    arcpy.CreateFileGDB_management("Data", "Output.gdb")
+except:
+    print 'GDB already in place'
+
+#Set the dataset as workspace
 arcpy.env.workspace = 'Data/Output.gdb'
 
-#Define path of the line map
-output = 'Data/Output.gdb/linemap'
+#Define unique path name for the line map
+linemap = arcpy.CreateUniqueName('linemap')
+linemap = linemap[16:]
+output = 'Data/Output.gdb/' + linemap
+
+print linemap, type(linemap)
 
 #Create Feature Class to populate
-arcpy.CreateFeatureclass_management('Data/Output.gdb', 'linemap', \
+arcpy.CreateFeatureclass_management('Data/Output.gdb', linemap, \
 'POLYLINE', None, 'DISABLED', 'DISABLED', 32662)
 
 #Add field to FC with the hour of the day
