@@ -7,7 +7,7 @@ from sys import exit
 #Retrieve file and create update cursor from it
 InputFile = 'data/2014-07 - Citi Bike trip data.csv'
 fields = ['starttime', 'start station latitude', 'start station longitude',\
- 'end station latitude', 'end station longitude']
+ 'end station latitude', 'end station longitude', 'stoptime']
 cursor = arcpy.da.SearchCursor(InputFile, fields)
 
 #Create dataset to put fc in
@@ -24,21 +24,18 @@ linemap = arcpy.CreateUniqueName('linemap')
 linemap = linemap[16:]
 output = 'Data/Output.gdb/' + linemap
 
-print linemap, type(linemap)
-
 #Create Feature Class to populate
 arcpy.CreateFeatureclass_management('Data/Output.gdb', linemap, \
 'POLYLINE', None, 'DISABLED', 'DISABLED', 32662)
 
-#Add field to FC with the hour of the day
-arcpy.AddField_management(output, 'Hour', 'FLOAT')
+#Add fields to FC with the start and endtime and the date
+arcpy.AddField_management(output, 'StartTime', 'DATE')
 
-#Create empty lists to append to
-#fc = []
-#hr = []
+arcpy.AddField_management(output, 'EndTime', 'DATE')
+print 'boo'
 
 #Create insertcursor for populating the FC
-fields2 = ['SHAPE@', 'Hour']
+fields2 = ['SHAPE@', 'StartTime', 'EndTime']
 inscursor = arcpy.da.InsertCursor(output, fields2)
 
 for row in cursor:
@@ -54,31 +51,28 @@ for row in cursor:
 
     #Put them in an array
     triplineArray = arcpy.Array([start,end])
+    sr = arcpy.SpatialReference(32662)
 
     #Create line between the two
-    tripline = arcpy.Polyline(triplineArray)
+    tripline = arcpy.Polyline(triplineArray, sr)
 
-    #Put hour in a list
+    #Get the start time from the source data
     values = row[0], #somehow it crashes without this comma
-    date = values[0]
-    hour = date.hour
-    print date, hour
+    starttime = values[0]
+
+    #Get the end time from the source data
+    values = row[5],
+    endtime = values[0]
 
     #Put point and hour in the FC with the InsertCursor
-    newRow = [tripline,hour]
+    newRow = [tripline, starttime, endtime]
     inscursor.insertRow(newRow)
 
+
     #End at day 2
-    if date.day == 2:
+    if endtime.hour == 4:
         break
 
-exit("NO PASS")
-
-#Put the fc in the dataset
-arcpy.CopyFeatures_management(point, output)
-
-#Project the fc in the dataset
-arcpy.DefineProjection_management(output, 32662)
 
 #Clean up the mess
 del cursor, inscursor, row
