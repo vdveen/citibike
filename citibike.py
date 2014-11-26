@@ -23,16 +23,16 @@ arcpy.env.workspace = 'Data/Output.gdb'
 linemap = arcpy.CreateUniqueName('linemap')
 linemap = linemap[16:]
 output = 'Data/Output.gdb/' + linemap
+print output
 
 #Create Feature Class to populate
 arcpy.CreateFeatureclass_management('Data/Output.gdb', linemap, \
-'POLYLINE', None, 'DISABLED', 'DISABLED', 32662)
+'POLYLINE', None, 'DISABLED', 'DISABLED', 4326)
 
 #Add fields to FC with the start and endtime and the date
 arcpy.AddField_management(output, 'StartTime', 'DATE')
 
 arcpy.AddField_management(output, 'EndTime', 'DATE')
-print 'boo'
 
 #Create insertcursor for populating the FC
 fields2 = ['SHAPE@', 'StartTime', 'EndTime']
@@ -51,7 +51,7 @@ for row in cursor:
 
     #Put them in an array
     triplineArray = arcpy.Array([start,end])
-    sr = arcpy.SpatialReference(32662)
+    sr = arcpy.SpatialReference(4326)
 
     #Create line between the two
     tripline = arcpy.Polyline(triplineArray, sr)
@@ -67,7 +67,6 @@ for row in cursor:
     #Put point and hour in the FC with the InsertCursor
     newRow = [tripline, starttime, endtime]
     inscursor.insertRow(newRow)
-
 
     #End at day 2
     if endtime.hour == 4:
