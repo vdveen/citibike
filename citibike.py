@@ -59,12 +59,10 @@ for row in cursor:
     tripline = arcpy.Polyline(triplineArray, sr)
 
     #Get the start time from the source data
-    values = row[0], #somehow it crashes without this comma
-    starttime = values[0]
+    starttime = row[0][0]
 
     #Get the end time from the source data
-    values = row[5],
-    endtime = values[0]
+    endtime = values[5][0]
 
     #Put point and hour in the FC with the InsertCursor
     newRow = [tripline, starttime, endtime]
