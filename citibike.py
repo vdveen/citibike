@@ -27,7 +27,7 @@ print output
 
 #Create Feature Class to populate
 arcpy.CreateFeatureclass_management('Data/Output.gdb', linemap, \
-'POLYLINE', None, 'DISABLED', 'DISABLED', 3857)
+'POLYLINE', None, 'DISABLED', 'DISABLED', 4326)
 
 #Add fields to FC with the start and endtime and the date
 arcpy.AddField_management(output, 'StartTime', 'DATE')
@@ -52,7 +52,7 @@ for row in cursor:
 
     #Put them in an array
     triplineArray = arcpy.Array([start,end])
-    sr = arcpy.SpatialReference(3857)
+    sr = arcpy.SpatialReference(4326)
 
     #Create line between the two
     tripline = arcpy.Polyline(triplineArray, sr)
@@ -75,11 +75,40 @@ for row in cursor:
         print count
 
     #End at day 2
-    if endtime.day == 2:
+    if starttime.day == 2:
         break
 
+#Put the results of the insert cursor in a layer file
+arcpy.MakeFeatureLayer_management(output,'temp')
+outputname = 'Data/' + linemap + '.lyr'
+print outputname
+arcpy.SaveToLayerFile_management('temp', outputname)
+
+#Get the layer file so it can be edited
+layer = arcpy.mapping.Layer(outputname)
+timelayer = arcpy.mapping.Layer('assets/Time.lyr')
+
+#Open empty map document
+mxd = arcpy.mapping.MapDocument('assets/Empty.mxd')
+df = arcpy.mapping.ListDataFrames(mxd)[0]
+print df
+#Copy time settings from time layer:
+arcpy.mapping.UpdateLayerTime(df, layer, timelayer)
+
+#Add layer to map document
+arcpy.mapping.AddLayer(df, layer)
+arcpy.RefreshActiveView
+
+lyrtime = layer.time
+print lyrtime.startTime, lyrtime.endTime
+print lyrtime.isTimeEnabled
+
+#Save to copy
+arcpy.env.overwriteOutput = True
+layer.saveACopy('Full.mxd')
+print arcpy.GetMessages()
 
 #Clean up the mess
-del cursor, inscursor, row
+del cursor, inscursor, row, mxd, df, layer, outputname
 
 print 'Done now'
