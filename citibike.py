@@ -1,6 +1,7 @@
 #Testing out cursors
 
 import arcpy
+import os
 import datetime
 from sys import exit
 
@@ -107,6 +108,17 @@ print lyrtime.isTimeEnabled
 arcpy.env.overwriteOutput = True
 layer.saveACopy('Full.mxd')
 print arcpy.GetMessages()
+
+arcpy.env.workspace = 'C:/Users/anne.vanderveen/Desktop/citibike/assets'
+#Attempt to crunch out images
+df.time.currentTime = df.time.startTime
+while df.time.currentTime <= df.time.endTime:
+    # An example str(newTime) would be: "2008-12-29 02:19:59"
+    # The following line splits the string at the space and takes the first
+    # item in the resulting string.
+    fileName = arcpy.CreateUniqueName('linemap') + ".png"
+    arcpy.mapping.ExportToPNG(mxd, fileName, df, 1080, 720)
+    df.time.currentTime = df.time.currentTime + df.time.timeStepInterval
 
 #Clean up the mess
 del cursor, inscursor, row, mxd, df, layer, outputname
